@@ -10,46 +10,59 @@ namespace Task9
             while (true)
             {
                 Console.WriteLine("Введите значения информационных полей элементов списка через пробел: ");
-                string input = Console.ReadLine();
+                string input = Console.ReadLine().Trim();
+
+                if (input == "")
+                    continue;
 
                 var items = input.Split();
-                List list = StringArrayToItem(items);
+                List list1 = StringArrayToItem(items);
+                List list2 = StringArrayToItem(items);
 
-                Console.WriteLine("ReverseData: ");
-                PrintList(ReverseData(list));
+                Console.WriteLine("Iterative Reverse: ");
+                PrintList(Reverse(list1));
 
-                Console.WriteLine("ReverseDataRecursion: ");
-                PrintList(ReverseDataRecursion(list));
-
-                Console.WriteLine("Map: ");
-                PrintList(list.map(s => new string(s.Reverse().ToArray())));
+                Console.WriteLine("Recursive Reverse: ");
+                PrintList(ReverseRecursion(list2));
 
                 Console.WriteLine();
             }
         }
 
-        static List ReverseData(List list)
+        static List Reverse(List list)
         {
-            var currentList = list;
-            var headItem = new List(new string(currentList.data.Reverse().ToArray()));
-            var newItem = headItem;
-
-            while (currentList.next != null)
+            if (list == null || list.next == null)
             {
-                currentList = currentList.next;
-                newItem.next = new List(new string(currentList.data.Reverse().ToArray()));
-                newItem = newItem.next;
+                return list;
             }
 
-            return headItem;
+            
+            var curr = list;
+            List prev = null;
+            while (curr != null)
+            {
+                List next;
+                next = curr.next;
+                curr.next = prev;
+
+                prev = curr;
+                curr = next;
+            }
+            return prev;
         }
 
-        static List ReverseDataRecursion(List list)
+        static List ReverseRecursion(List list)
         {
-            List newList = new List(new string(list.data.Reverse().ToArray()));
-            if (list.next != null)
-                newList.next = ReverseDataRecursion(list.next);
-            return newList;
+            if (list == null)
+                return null;
+            if (list.next == null)
+                return list;
+
+            var next = list.next;
+            list.next = null;
+            var tail = ReverseRecursion(next);
+            next.next = list;
+            return tail;
         }
 
         static List StringArrayToItem(string[] items)
